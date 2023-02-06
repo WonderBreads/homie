@@ -12,7 +12,14 @@ export default function RootLayout({
         head.tsx. Find out more at https://beta.nextjs.org/docs/api-reference/file-conventions/head
       */}
       <head />
-      <body>{children}</body>
+      <body className='globalBody'>
+      <div className='section'>
+        <nav className='navbar'>
+          <h1>Homie  22</h1>
+        </nav>
+        {children}
+        </div>
+        </body>
     </html>
   )
 }

@@ -1,0 +1,27 @@
+.loginMain {
+        display: flex;
+        flex-flow: column wrap;
+        align-items: center;
+        justify-content: space-around;
+        background-color: aqua;
+        width: 100vi;
+        height: 100vb;
+
+}
+
+.loginContent{
+    display: flex;
+    flex-flow: column wrap;
+    flex: 1 auto;
+    background-color: rgb(183, 242, 138);
+    justify-content: space-around;
+    align-items: center;
+    width: 80vi;
+}
+
+.loginButton {
+    border-radius: 50%;
+    height: 80px;
+    width: 80px;
+}
+
