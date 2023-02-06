@@ -15,7 +15,7 @@ export default function RootLayout({
       <body className='globalBody'>
       <div className='section'>
         <nav className='navbar'>
-          <h1>Homie  22</h1>
+          <h1>Homie</h1>
         </nav>
         {children}
         </div>
