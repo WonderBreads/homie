@@ -11,7 +11,7 @@ export default function Home() {
       <div className={styles.homePageContainer}>
             <h1>Homie</h1>
             <button className={styles.loginButton}> Log In </button>
-            <a className={styles.dontHaveAnAccount} href="">Don&#39;t have an account?</a>
+            <Link className={styles.dontHaveAnAccount} href="/Signup/">Don&#39;t have an account?</Link>
             </div>
     </main>
   )
