@@ -6,8 +6,12 @@ const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
   return (
-    <main>
-      <h1>Home Page</h1>
+    <main >
+      <section className={styles.loginContent}>
+            <h1>Homie</h1>
+            <button className={styles.loginButton}> Login </button>
+            <a href="">Dont have an account?</a>
+            </section>
     </main>
   )
 }

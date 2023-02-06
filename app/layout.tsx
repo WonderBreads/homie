@@ -1,4 +1,5 @@
 import './globals.css'
+import Navbar from './navbar'
 
 export default function RootLayout({
   children,
@@ -14,9 +15,7 @@ export default function RootLayout({
       <head />
       <body className='globalBody'>
       <div className='section'>
-        <nav className='navbar'>
-          <h1>Homie</h1>
-        </nav>
+        <Navbar />
         {children}
         </div>
         </body>
