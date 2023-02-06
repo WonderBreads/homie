@@ -1,29 +1,16 @@
 .globalBody {
     display: flex;
-    flex-flow: row wrap;
-    align-items: center;
-    background-color: beige;
-    width: 100dvw;
-    height: 100dvh;
+    flex-direction: column;
     margin: 0;
-
-}
-
-.section{
-    display: flex;
-    flex-flow: row wrap;
-    align-items: center;
-    background-color: beige;
-    width: 100dvw;
-    height: 100dvh;
-    margin: 0;
-    flex: 1;
+    font-family: "Inter";
+    font-weight: 700;
 }
 
 .navbar {
-    padding-left:5vi;
-    width: 100dvw;
-    height: 10dvb;
+    padding-top: 31px;;
+    padding-left: 36px;
     margin: 0;
-    background-color: burlywood;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 29.05px;
 }
