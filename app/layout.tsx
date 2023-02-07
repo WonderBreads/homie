@@ -1,4 +1,8 @@
 import './globals.css'
+import { Inter } from '@next/font/google'
+import Navbar from './navbar'
+
+const inter = Inter({ subsets: ['latin'] })
 
 export default function RootLayout({
   children,
@@ -12,7 +16,10 @@ export default function RootLayout({
         head.tsx. Find out more at https://beta.nextjs.org/docs/api-reference/file-conventions/head
       */}
       <head />
-      <body>{children}</body>
+      <body className='globalBody'>
+        <Navbar />
+        {children}
+        </body>
     </html>
   )
 }
