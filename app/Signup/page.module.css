@@ -1,27 +1,120 @@
-.loginMain {
-        display: flex;
-        flex-flow: column wrap;
-        align-items: center;
-        justify-content: space-around;
-        background-color: aqua;
-        width: 100vi;
-        height: 100vb;
-
-}
-
-.loginContent{
+.signUp_Page_Container {
     display: flex;
-    flex-flow: column wrap;
-    flex: 1 auto;
-    background-color: rgb(183, 242, 138);
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
-    width: 80vi;
+    text-align: center;
+    min-height: 100px;
+    flex-direction: column;
+    font-family: inherit;
 }
 
-.loginButton {
+.signUp_Form_Container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100px;
+    flex-direction: column;
+    margin-top: 40px;
+    font: inherit;
+}
+
+.signUp_Form_Container_Item {
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+}
+
+
+.signUp_Form_Container_Item Input {
+    Width: 536px;
+    Height: 52px;
+    border-radius: 30px;
+    border: 1px solid black;
+    text-align: center;
+}
+/* 
+
+.signUp_Form_Container_Item_Cut {
+    background-color: #7d87f5;
+    border-radius: 10px;
+    height: 20px;
+    left: 20px;
+    top: -20px;
+    transform: translateY(0);
+    transition: transform 200ms;
+    width: 76px;
+} */
+
+
+
+
+/* v code for the jumping input placeholder v */
+
+.signUp_Form_Container_Item_Placeholder {
+    color: #65657b;
+    font-family: sans-serif;
+    text-align: left;
+    pointer-events: none;
+    transform-origin: 0 50%;
+    transform: translateY(-50px) translateX(20px);
+    
+}
+
+.signUp_Form_Container_Item input:focus~.signUp_Form_Container_Item_Placeholder,
+.signUp_Form_Container_Item input:not(:placeholder-shown)~.signUp_Form_Container_Item_Placeholder {
+    transform: translateY(-75px) translateX(20px);
+}
+
+.signUp_Form_Container_Item input:not(:placeholder-shown)~.signUp_Form_Container_Item_Placeholder {
+    color: #808097;
+}
+
+.signUp_Form_Container_Item input:focus~.signUp_Form_Container_Item_Placeholder {
+    color: #079b33;
+}
+
+/* .signUp_Form_Container [input=text]{
+ background-color: brown;
+ padding: 100000px;
+} */
+
+
+.signUp_Submit_Section {
+    display: flex;
+    flex-direction: column;
+    font-family: inherit;
+    justify-content: center;
+    align-items: center;
+
+}
+.signUp_Submit_Section_buttons{
+    display: flex;
+    flex-direction: row;
+    gap: 150px;
+}
+.signUp_Submit_Section_SignUp_Button {
+    margin-bottom: 30px;
+    Width: 100px;
+    Height: 100px;
+    border:1px solid  transparent;
+    background-color:#09F82F;
     border-radius: 50%;
-    height: 80px;
-    width: 80px;
+    font-size: 14px;
 }
 
+.signUp_Not_Quite_Display {
+    margin-bottom: 30px;
+    Width: 100px;
+    Height: 100px;
+    border:1px solid  transparent;
+    background-color:red;
+    color: white;
+    border-radius: 50%;
+    font-size: 14px;
+}
+
+.signUp_Error_Message_Display {
+    color: red;
+    font-size: 14px;
+
+}
