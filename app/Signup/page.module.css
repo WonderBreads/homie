@@ -1,4 +1,4 @@
-.signUp_Page_Container {
+.signUpPageContainer {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -8,7 +8,7 @@
     font-family: inherit;
 }
 
-.signUp_Form_Container {
+.signUpFormContainer {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -18,14 +18,14 @@
     font: inherit;
 }
 
-.signUp_Form_Container_Item {
+.signUpFormContainerItem {
     display: flex;
     flex-direction: column;
     margin: 10px;
 }
 
 
-.signUp_Form_Container_Item Input {
+.signUpFormContainerItem Input {
     Width: 536px;
     Height: 52px;
     border-radius: 30px;
@@ -34,7 +34,7 @@
 }
 /* 
 
-.signUp_Form_Container_Item_Cut {
+.signUpFormContainerItemCut {
     background-color: #7d87f5;
     border-radius: 10px;
     height: 20px;
@@ -50,7 +50,7 @@
 
 /* v code for the jumping input placeholder v */
 
-.signUp_Form_Container_Item_Placeholder {
+.signUpFormContainerItemPlaceholder {
     color: #65657b;
     font-family: sans-serif;
     text-align: left;
@@ -60,26 +60,26 @@
     
 }
 
-.signUp_Form_Container_Item input:focus~.signUp_Form_Container_Item_Placeholder,
-.signUp_Form_Container_Item input:not(:placeholder-shown)~.signUp_Form_Container_Item_Placeholder {
+.signUpFormContainerItem input:focus~.signUpFormContainerItemPlaceholder,
+.signUpFormContainerItem input:not(:placeholder-shown)~.signUpFormContainerItemPlaceholder {
     transform: translateY(-75px) translateX(20px);
 }
 
-.signUp_Form_Container_Item input:not(:placeholder-shown)~.signUp_Form_Container_Item_Placeholder {
+.signUpFormContainerItem input:not(:placeholder-shown)~.signUpFormContainerItemPlaceholder {
     color: #808097;
 }
 
-.signUp_Form_Container_Item input:focus~.signUp_Form_Container_Item_Placeholder {
+.signUpFormContainerItem input:focus~.signUpFormContainerItemPlaceholder {
     color: #079b33;
 }
 
-/* .signUp_Form_Container [input=text]{
+/* .signUpFormContainer [input=text]{
  background-color: brown;
  padding: 100000px;
 } */
 
 
-.signUp_Submit_Section {
+.signUpSubmitSection {
     display: flex;
     flex-direction: column;
     font-family: inherit;
@@ -87,12 +87,12 @@
     align-items: center;
 
 }
-.signUp_Submit_Section_buttons{
+.signUpSubmitSectionbuttons{
     display: flex;
     flex-direction: row;
     gap: 150px;
 }
-.signUp_Submit_Section_SignUp_Button {
+.signUpSubmitSectionSignUpButton {
     margin-bottom: 30px;
     Width: 100px;
     Height: 100px;
@@ -102,7 +102,7 @@
     font-size: 14px;
 }
 
-.signUp_Not_Quite_Display {
+.signUpNotQuiteDisplay {
     margin-bottom: 30px;
     Width: 100px;
     Height: 100px;
@@ -113,8 +113,12 @@
     font-size: 14px;
 }
 
-.signUp_Error_Message_Display {
+.signUpErrorMessageDisplay {
     color: red;
     font-size: 14px;
-
+    display: flex;
+    flex-direction: column;
+    font-family: inherit;
+    justify-content: center;
+    align-items: center;
 }
