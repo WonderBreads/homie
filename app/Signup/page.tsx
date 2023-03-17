@@ -1,7 +1,6 @@
 'use client';
-import styles from "./page.module.css"
-import Form from "./form"
-import { useState, useEffect } from "react";
+import styles from "./page.module.css";
+import { useState} from "react";
 
 export default function Page() {
 
@@ -11,7 +10,7 @@ export default function Page() {
         userName: "",
         houseName: "",
         userEmail: "",
-        userPassword: ""
+        userPassword: "" 
     });
     const [password, setPassword] = useState("");
     const [rePassword, setRePassword] = useState("");
@@ -21,55 +20,45 @@ export default function Page() {
     const [userRePasswordError, setUserRePasswordError] = useState(false);
     const hasError = houseError || emailError || userPasswordError || userRePasswordError;
 
-    // Handles the Signup form changes and validation
-    const handleInputChange = (e) => {
-        setUser(prevState => ({ ...prevState, [e.target.name]: e.target.value }))
-
-        let alphaNumericCheck = /^[a-z0-9]+$/i;
-        let emailValidation = /^(([^<>()[\]\\.,;: \s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-        if (e.target.name == "houseName" && !alphaNumericCheck.test(e.target.value) && !houseError) {
+    const validateHouseName = (e) => {
+        const alphaNumericCheck = /^[a-z\d\-_\s]+$/i;
+        if ( !alphaNumericCheck.test(e.target.value)) {
             setHouseError(true);
-            document.getElementById('houseName')!.style.background = "red";
         }
-        else if (e.target.name == "houseName" && alphaNumericCheck.test(e.target.value) && houseError) {
-            setHouseError(false);
-            document.getElementById('houseName')!.style.background = "white";
-        }
+        else
+        setHouseError(false);
+    }
 
-        if (e.target.name == "userEmail" && !(emailValidation.test(e.target.value))) {
+    const validateEmail = (e) => {
+        const emailValidation = /^(([^<>()[\]\\.,;: \s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+        if (!(emailValidation.test(e.target.value))) {
             setEmailError(true);
-            document.getElementById('userEmail')!.style.background = "red";
         }
-        else if (e.target.name == "userEmail" && emailValidation.test(e.target.value)) {
-            setEmailError(false);
-            document.getElementById('userEmail')!.style.background = "white";
-        }
+        else
+        setEmailError(false);
+    }
 
-        if (e.target.name == "userPassword" && (e.target.value.length < 8)) {
+    const validateUserPassword = (e) => {
+        if (password.length+2 <= 8) {
             setUserPasswordError(true);
             setPassword(e.target.value);
-            document.getElementById('userPassword')!.style.background = "red";
-
         }
-        else if (e.target.name == "userPassword" && (e.target.value.length >= 8)) {
+         else {
             setUserPasswordError(false);
             setPassword(e.target.value);
-            document.getElementById('userPassword')!.style.background = "white";
         }
-
-        if (e.target.name == "rePassword" && e.target.value === password) {
-            setUserRePasswordError(false);
-            setRePassword(e.target.value);
-            document.getElementById('rePassword')!.style.background = "white";
-        }
-        else if (e.target.name == "rePassword" && e.target.value !== password) {
-            setUserRePasswordError(true);
-            setRePassword(e.target.value);
-            document.getElementById('rePassword')!.style.background = "red";
-        }
-
     }
+
+    const validateUserRePassword = (e) => {
+        if (e.target.value !== password) {
+            setUserRePasswordError(true);
+        }
+        else
+        setUserRePasswordError(false);
+    }
+
+    
 
     const form = () => {
         return (
@@ -78,38 +67,38 @@ export default function Page() {
 
                 <div className={styles.signUpFormContainerItem}>
 
-                    <input type="text" id="firstName" name="firstName" placeholder=" " onChange={handleInputChange} />
+                    <input type="text" id="firstName" name="firstName" placeholder=" " />
                     <label htmlFor="firstName" className={styles.signUpFormContainerItemPlaceholder}>First Name</label>
 
                 </div>
 
                 <div className={styles.signUpFormContainerItem}>
-                    <input type="text" id="lastName" name="lastName" placeholder=" " onChange={handleInputChange} />
+                    <input type="text" id="lastName" name="lastName" placeholder=" "/>
                     <label htmlFor="lastName" className={styles.signUpFormContainerItemPlaceholder}>Last Name</label>
                 </div>
 
                 <div className={styles.signUpFormContainerItem}>
-                    <input type="text" id="userName" name="userName" placeholder=" " onChange={handleInputChange} />
+                    <input type="text" id="userName" name="userName" placeholder=" "/>
                     <label htmlFor="userName" className={styles.signUpFormContainerItemPlaceholder}>User Name</label>
                 </div>
 
                 <div className={styles.signUpFormContainerItem}>
-                    <input type="text" id="houseName" name="houseName" placeholder=" " required pattern="^[a-z0-9]+$" onChange={handleInputChange} />
+                    <input type="text" id="houseName" name="houseName" placeholder=" "  onChange={ (e) => validateHouseName(e)} style={{ background: houseError ? "#E72727" : "white"}} required pattern="/^[a-z\d\-_\s]+$/i"/>
                     <label htmlFor="houseName" className={styles.signUpFormContainerItemPlaceholder}> House Name</label>
                 </div>
 
                 <div className={styles.signUpFormContainerItem}>
-                    <input type="email" id="userEmail" name="userEmail" placeholder=" " onChange={handleInputChange} required />
+                    <input type="email" id="userEmail" name="userEmail" placeholder=" " onChange={ (e) => validateEmail(e)} style={{ background: emailError ? "#E72727" : "white"}} required />
                     <label htmlFor="userEmail" className={styles.signUpFormContainerItemPlaceholder}>Email</label>
                 </div>
 
                 <div className={styles.signUpFormContainerItem}>
-                    <input type="password" id="userPassword" name="userPassword" placeholder=" " onChange={handleInputChange} required minLength={8} />
+                    <input type="password" id="userPassword" name="userPassword" placeholder=" " onChange={ (e) => validateUserPassword(e)} style={{ background: userPasswordError ? "#E72727" : "white"}} required minLength={8} />
                     <label htmlFor="userPassword" className={styles.signUpFormContainerItemPlaceholder}>Password</label>
                 </div>
 
                 <div className={styles.signUpFormContainerItem}>
-                    <input type="password" id="rePassword" name="rePassword" placeholder=" " onChange={handleInputChange} required minLength={8} />
+                    <input type="password" id="rePassword" name="rePassword" placeholder=" " onChange={ (e) => validateUserRePassword(e)} style={{ background: userRePasswordError ? "#E72727" : "white"}} required minLength={8} />
                     <label htmlFor="rePassword" className={styles.signUpFormContainerItemPlaceholder}>Re-Enter pasword</label>
                 </div>
 
