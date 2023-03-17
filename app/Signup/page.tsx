@@ -4,14 +4,6 @@ import { useState} from "react";
 
 export default function Page() {
 
-    const [user, setUser] = useState({
-        firstName: "",
-        lastName: "",
-        userName: "",
-        houseName: "",
-        userEmail: "",
-        userPassword: "" 
-    });
     const [password, setPassword] = useState("");
     const [rePassword, setRePassword] = useState("");
     const [houseError, setHouseError] = useState(false);
@@ -25,7 +17,6 @@ export default function Page() {
         if ( !alphaNumericCheck.test(e.target.value)) {
             setHouseError(true);
         }
-        else
         setHouseError(false);
     }
 
@@ -35,7 +26,6 @@ export default function Page() {
         if (!(emailValidation.test(e.target.value))) {
             setEmailError(true);
         }
-        else
         setEmailError(false);
     }
 
@@ -44,17 +34,14 @@ export default function Page() {
             setUserPasswordError(true);
             setPassword(e.target.value);
         }
-         else {
             setUserPasswordError(false);
             setPassword(e.target.value);
-        }
     }
 
     const validateUserRePassword = (e) => {
         if (e.target.value !== password) {
             setUserRePasswordError(true);
         }
-        else
         setUserRePasswordError(false);
     }
 
