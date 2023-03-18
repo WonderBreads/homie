@@ -1,6 +1,6 @@
 'use client';
 import styles from "./page.module.css";
-import { useState} from "react";
+import { useState } from "react";
 
 export default function Page() {
 
@@ -14,8 +14,9 @@ export default function Page() {
 
     const validateHouseName = (e) => {
         const alphaNumericCheck = /^[a-z\d\-_\s]+$/i;
-        if ( !alphaNumericCheck.test(e.target.value)) {
+        if (!alphaNumericCheck.test(e.target.value)) {
             setHouseError(true);
+            return;
         }
         setHouseError(false);
     }
@@ -25,27 +26,31 @@ export default function Page() {
 
         if (!(emailValidation.test(e.target.value))) {
             setEmailError(true);
+            return;
         }
         setEmailError(false);
     }
 
     const validateUserPassword = (e) => {
-        if (password.length+2 <= 8) {
+        if (e.target.value.length < 8) {
+            console.log('should be erroring')
             setUserPasswordError(true);
-            setPassword(e.target.value);
+            setRePassword(e.target.value);
+            return;
         }
-            setUserPasswordError(false);
-            setPassword(e.target.value);
+        setUserPasswordError(false);
+        setRePassword(e.target.value)
     }
 
     const validateUserRePassword = (e) => {
-        if (e.target.value !== password) {
+        if (e.target.value !== rePassword) {
             setUserRePasswordError(true);
+            return;
         }
         setUserRePasswordError(false);
     }
 
-    
+
 
     const form = () => {
         return (
@@ -60,32 +65,32 @@ export default function Page() {
                 </div>
 
                 <div className={styles.signUpFormContainerItem}>
-                    <input type="text" id="lastName" name="lastName" placeholder=" "/>
+                    <input type="text" id="lastName" name="lastName" placeholder=" " />
                     <label htmlFor="lastName" className={styles.signUpFormContainerItemPlaceholder}>Last Name</label>
                 </div>
 
                 <div className={styles.signUpFormContainerItem}>
-                    <input type="text" id="userName" name="userName" placeholder=" "/>
+                    <input type="text" id="userName" name="userName" placeholder=" " />
                     <label htmlFor="userName" className={styles.signUpFormContainerItemPlaceholder}>User Name</label>
                 </div>
 
                 <div className={styles.signUpFormContainerItem}>
-                    <input type="text" id="houseName" name="houseName" placeholder=" "  onChange={ (e) => validateHouseName(e)} style={{ background: houseError ? "#E72727" : "white"}} required pattern="/^[a-z\d\-_\s]+$/i"/>
+                    <input type="text" id="houseName" name="houseName" placeholder=" " onChange={(e) => validateHouseName(e)} style={{ background: houseError ? "#E72727" : "white" }} required pattern="/^[a-z\d\-_\s]+$/i" />
                     <label htmlFor="houseName" className={styles.signUpFormContainerItemPlaceholder}> House Name</label>
                 </div>
 
                 <div className={styles.signUpFormContainerItem}>
-                    <input type="email" id="userEmail" name="userEmail" placeholder=" " onChange={ (e) => validateEmail(e)} style={{ background: emailError ? "#E72727" : "white"}} required />
+                    <input type="email" id="userEmail" name="userEmail" placeholder=" " onChange={(e) => validateEmail(e)} style={{ background: emailError ? "#E72727" : "white" }} required />
                     <label htmlFor="userEmail" className={styles.signUpFormContainerItemPlaceholder}>Email</label>
                 </div>
 
                 <div className={styles.signUpFormContainerItem}>
-                    <input type="password" id="userPassword" name="userPassword" placeholder=" " onChange={ (e) => validateUserPassword(e)} style={{ background: userPasswordError ? "#E72727" : "white"}} required minLength={8} />
+                    <input type="password" id="userPassword" name="userPassword" placeholder=" " onChange={(e) => validateUserPassword(e)} style={{ background: userPasswordError ? "#E72727" : "white" }} required minLength={8} />
                     <label htmlFor="userPassword" className={styles.signUpFormContainerItemPlaceholder}>Password</label>
                 </div>
 
                 <div className={styles.signUpFormContainerItem}>
-                    <input type="password" id="rePassword" name="rePassword" placeholder=" " onChange={ (e) => validateUserRePassword(e)} style={{ background: userRePasswordError ? "#E72727" : "white"}} required minLength={8} />
+                    <input type="password" id="rePassword" name="rePassword" placeholder=" " onChange={(e) => validateUserRePassword(e)} style={{ background: userRePasswordError ? "#E72727" : "white" }} required minLength={8} />
                     <label htmlFor="rePassword" className={styles.signUpFormContainerItemPlaceholder}>Re-Enter pasword</label>
                 </div>
 
@@ -122,7 +127,7 @@ export default function Page() {
     }
 
 
-        // Returns Signup page container
+    // Returns Signup page container
     return (
         <main className={styles.signUpPageContainer}>
             <h1>Create an Account</h1>
