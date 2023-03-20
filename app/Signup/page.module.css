@@ -1,27 +1,124 @@
-.loginMain {
-        display: flex;
-        flex-flow: column wrap;
-        align-items: center;
-        justify-content: space-around;
-        background-color: aqua;
-        width: 100vi;
-        height: 100vb;
-
-}
-
-.loginContent{
+.signUpPageContainer {
     display: flex;
-    flex-flow: column wrap;
-    flex: 1 auto;
-    background-color: rgb(183, 242, 138);
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
-    width: 80vi;
+    text-align: center;
+    min-height: 100px;
+    flex-direction: column;
+    font-family: inherit;
 }
 
-.loginButton {
+.signUpFormContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100px;
+    flex-direction: column;
+    margin-top: 40px;
+    font: inherit;
+}
+
+.signUpFormContainerItem {
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+}
+
+
+.signUpFormContainerItem Input {
+    Width: 536px;
+    Height: 52px;
+    border-radius: 30px;
+    border: 1px solid black;
+    text-align: center;
+}
+/* 
+
+.signUpFormContainerItemCut {
+    background-color: #7d87f5;
+    border-radius: 10px;
+    height: 20px;
+    left: 20px;
+    top: -20px;
+    transform: translateY(0);
+    transition: transform 200ms;
+    width: 76px;
+} */
+
+
+
+
+/* v code for the jumping input placeholder v */
+
+.signUpFormContainerItemPlaceholder {
+    color: #65657b;
+    font-family: sans-serif;
+    text-align: left;
+    pointer-events: none;
+    transform-origin: 0 50%;
+    transform: translateY(-50px) translateX(20px);
+    
+}
+
+.signUpFormContainerItem input:focus~.signUpFormContainerItemPlaceholder,
+.signUpFormContainerItem input:not(:placeholder-shown)~.signUpFormContainerItemPlaceholder {
+    transform: translateY(-75px) translateX(20px);
+}
+
+.signUpFormContainerItem input:not(:placeholder-shown)~.signUpFormContainerItemPlaceholder {
+    color: #808097;
+}
+
+.signUpFormContainerItem input:focus~.signUpFormContainerItemPlaceholder {
+    color: #079b33;
+}
+
+/* .signUpFormContainer [input=text]{
+ background-color: brown;
+ padding: 100000px;
+} */
+
+
+.signUpSubmitSection {
+    display: flex;
+    flex-direction: column;
+    font-family: inherit;
+    justify-content: center;
+    align-items: center;
+
+}
+.signUpSubmitSectionbuttons{
+    display: flex;
+    flex-direction: row;
+    gap: 150px;
+}
+.signUpSubmitSectionSignUpButton {
+    margin-bottom: 30px;
+    Width: 100px;
+    Height: 100px;
+    border:1px solid  transparent;
+    background-color:#09F82F;
     border-radius: 50%;
-    height: 80px;
-    width: 80px;
+    font-size: 14px;
 }
 
+.signUpNotQuiteDisplay {
+    margin-bottom: 30px;
+    Width: 100px;
+    Height: 100px;
+    border:1px solid  transparent;
+    background-color:red;
+    color: white;
+    border-radius: 50%;
+    font-size: 14px;
+}
+
+.signUpErrorMessageDisplay {
+    color: red;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    font-family: inherit;
+    justify-content: center;
+    align-items: center;
+}
