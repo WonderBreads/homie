@@ -1,6 +1,7 @@
 'use client';
 import styles from "./page.module.css";
 import { useState } from "react";
+import PocketBase from "pocketbase";
 
 export default function Page() {
 
@@ -11,6 +12,23 @@ export default function Page() {
     const [userPasswordError, setUserPasswordError] = useState(false);
     const [userRePasswordError, setUserRePasswordError] = useState(false);
     const hasError = houseError || emailError || userPasswordError || userRePasswordError;
+
+    const [email, setEmail] = useState("");
+    const [houseName, setHouseName] = useState("");
+    const [userName, setUserName] = useState("");
+    const [displayName, setDisplayName] = useState("");
+
+    const pb = new PocketBase('https://127.0.0.1.8090/');
+    pb.autoCancellation(false);
+
+
+    const validateDisplayName = (e) => {
+        setDisplayName(e.target.name);
+    }
+
+    const validateUserName = (e) => {
+        setUserName(e.target.value);
+    }
 
     const validateHouseName = (e) => {
         const alphaNumericCheck = /^[a-z\d\-_\s]+$/i;
@@ -51,15 +69,35 @@ export default function Page() {
     }
 
 
+    const signUp = async (e) => {
+
+        // example create data
+        const user = {
+            "username": "test_username",
+            email: "test@example.com",
+            emailVisibility: true,
+            password: "12345678",
+            passwordConfirm: "12345678",
+            display_name: "test",
+            house_name: "test"
+        };
+        console.log("users: before collecion creation " + JSON.stringify(user));
+        
+        await pb.collection('users').create({user});
+
+        console.log("users: after collecion creation " + user);
+    }
+
+
 
     const form = () => {
         return (
             // Signup Form Ui
-            <form action="/api/form" method="post" className={styles.signUpFormContainer}>
+            <form  method="post" className={styles.signUpFormContainer}>
 
                 <div className={styles.signUpFormContainerItem}>
 
-                    <input type="text" id="firstName" name="firstName" placeholder=" " />
+                    <input type="text" id="firstName" name="firstName" placeholder=" " onChange={(e) => validateDisplayName(e)} />
                     <label htmlFor="firstName" className={styles.signUpFormContainerItemPlaceholder}>First Name</label>
 
                 </div>
@@ -75,7 +113,7 @@ export default function Page() {
                 </div>
 
                 <div className={styles.signUpFormContainerItem}>
-                    <input type="text" id="houseName" name="houseName" placeholder=" " onChange={(e) => validateHouseName(e)} style={{ background: houseError ? "#E72727" : "white" }} required pattern="/^[a-z\d\-_\s]+$/i" />
+                    <input type="text" id="houseName" name="houseName" placeholder=" " onChange={(e) => validateHouseName(e)} style={{ background: houseError ? "#E72727" : "white" }} required/>
                     <label htmlFor="houseName" className={styles.signUpFormContainerItemPlaceholder}> House Name</label>
                 </div>
 
@@ -85,12 +123,12 @@ export default function Page() {
                 </div>
 
                 <div className={styles.signUpFormContainerItem}>
-                    <input type="password" id="userPassword" name="userPassword" placeholder=" " onChange={(e) => validateUserPassword(e)} style={{ background: userPasswordError ? "#E72727" : "white" }} required minLength={8} />
+                    <input type="password" id="userPassword" name="userPassword" placeholder=" " onChange={(e) => validateUserPassword(e)} style={{ background: userPasswordError ? "#E72727" : "white" }} required minLength={7} />
                     <label htmlFor="userPassword" className={styles.signUpFormContainerItemPlaceholder}>Password</label>
                 </div>
 
                 <div className={styles.signUpFormContainerItem}>
-                    <input type="password" id="rePassword" name="rePassword" placeholder=" " onChange={(e) => validateUserRePassword(e)} style={{ background: userRePasswordError ? "#E72727" : "white" }} required minLength={8} />
+                    <input type="password" id="rePassword" name="rePassword" placeholder=" " onChange={(e) => validateUserRePassword(e)} style={{ background: userRePasswordError ? "#E72727" : "white" }} required minLength={7} />
                     <label htmlFor="rePassword" className={styles.signUpFormContainerItemPlaceholder}>Re-Enter pasword</label>
                 </div>
 
@@ -101,7 +139,7 @@ export default function Page() {
                     <div className={styles.signUpSubmitSectionbuttons}>
 
                         {!hasError && (
-                            <button type="submit" className={styles.signUpSubmitSectionSignUpButton}>Sign-up</button>
+                            <button type="submit" className={styles.signUpSubmitSectionSignUpButton} onClick={(e) => signUp(e)}>Sign-up</button>
                         )}
                         {hasError && (
                             <button className={styles.signUpNotQuiteDisplay}>Not Quite</button>
