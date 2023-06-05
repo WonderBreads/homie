@@ -2,6 +2,9 @@
 import styles from "./page.module.css";
 import { useState } from "react";
 import PocketBase from "pocketbase";
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 export default function Page() {
 
@@ -17,6 +20,29 @@ export default function Page() {
     const [houseName, setHouseName] = useState("");
     const [userName, setUserName] = useState("");
     const [displayName, setDisplayName] = useState("");
+
+
+    // Import the functions you need from the SDKs you need
+
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+        apiKey: "AIzaSyBHXTSxRBWYYcaaJU8fVz1kUhhUbtV6J2k",
+        authDomain: "homie-f1c4c.firebaseapp.com",
+        projectId: "homie-f1c4c",
+        storageBucket: "homie-f1c4c.appspot.com",
+        messagingSenderId: "296299800138",
+        appId: "1:296299800138:web:ba56234b0932254f81a8b3",
+        measurementId: "G-CKPG5ZHFTX"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+
+    const analytics = getAnalytics(app);
 
     const pb = new PocketBase('https://127.0.0.1.8090/');
     pb.autoCancellation(false);
@@ -51,7 +77,6 @@ export default function Page() {
 
     const validateUserPassword = (e) => {
         if (e.target.value.length < 8) {
-            console.log('should be erroring')
             setUserPasswordError(true);
             setRePassword(e.target.value);
             return;
@@ -69,31 +94,44 @@ export default function Page() {
     }
 
 
-    const signUp = async (e) => {
+    // const signUp = async (e) => {
 
-        // example create data
-        const user = {
-            "username": "test_username",
-            email: "test@example.com",
-            emailVisibility: true,
-            password: "12345678",
-            passwordConfirm: "12345678",
-            display_name: "test",
-            house_name: "test"
-        };
-        console.log("users: before collecion creation " + JSON.stringify(user));
-        
-        await pb.collection('users').create({user});
+    //     // example create data
+    //     const user = {
+    //         "username": "test_username",
+    //         email: "test@example.com",
+    //         emailVisibility: true,
+    //         password: "12345678",
+    //         passwordConfirm: "12345678",
+    //         display_name: "test",
+    //         house_name: "test"
+    //     };
+    //     console.log("users: before collecion creation " + JSON.stringify(user));
 
-        console.log("users: after collecion creation " + user);
-    }
+    //     await pb.collection('users').create({ user });
 
+    //     console.log("users: after collecion creation " + user);
+    // }
+
+    const auth = getAuth(app);
+    console.log(app);
+    createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            // Signed in 
+            const user = userCredential.user;
+            // ...
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // ..
+        });
 
 
     const form = () => {
         return (
             // Signup Form Ui
-            <form  method="post" className={styles.signUpFormContainer}>
+            <form method="post" className={styles.signUpFormContainer}>
 
                 <div className={styles.signUpFormContainerItem}>
 
@@ -113,7 +151,7 @@ export default function Page() {
                 </div>
 
                 <div className={styles.signUpFormContainerItem}>
-                    <input type="text" id="houseName" name="houseName" placeholder=" " onChange={(e) => validateHouseName(e)} style={{ background: houseError ? "#E72727" : "white" }} required/>
+                    <input type="text" id="houseName" name="houseName" placeholder=" " onChange={(e) => validateHouseName(e)} style={{ background: houseError ? "#E72727" : "white" }} required />
                     <label htmlFor="houseName" className={styles.signUpFormContainerItemPlaceholder}> House Name</label>
                 </div>
 
@@ -139,7 +177,7 @@ export default function Page() {
                     <div className={styles.signUpSubmitSectionbuttons}>
 
                         {!hasError && (
-                            <button type="submit" className={styles.signUpSubmitSectionSignUpButton} onClick={(e) => signUp(e)}>Sign-up</button>
+                            <button type="submit" className={styles.signUpSubmitSectionSignUpButton} onClick={(e) => {createUserWithEmailAndPassword(auth,email,password);}}>Sign-up</button>
                         )}
                         {hasError && (
                             <button className={styles.signUpNotQuiteDisplay}>Not Quite</button>
