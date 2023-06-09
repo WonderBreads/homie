@@ -1,16 +1,40 @@
 'use client';
 import styles from "./page.module.css";
 import { useState } from "react";
+import PocketBase from "pocketbase";
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import firebaseAuth from "@/firebase";
 
 export default function Page() {
 
-    const [password, setPassword] = useState("");
+    const [password, setPassword] = useState<string>("");
     const [rePassword, setRePassword] = useState("");
     const [houseError, setHouseError] = useState(false);
     const [emailError, setEmailError] = useState(false);
     const [userPasswordError, setUserPasswordError] = useState(false);
     const [userRePasswordError, setUserRePasswordError] = useState(false);
     const hasError = houseError || emailError || userPasswordError || userRePasswordError;
+
+    const [email, setEmail] = useState("");
+    const [houseName, setHouseName] = useState("");
+    const [userName, setUserName] = useState("");
+    const [displayName, setDisplayName] = useState("");
+
+    const [firebaseErrorMessage, setFirebaseErrorMessage] = useState("");
+
+    const pb = new PocketBase('https://127.0.0.1.8090/');
+    pb.autoCancellation(false);
+
+
+    const validateDisplayName = (e) => {
+        setDisplayName(e.target.name);
+    }
+
+    const validateUserName = (e) => {
+        setUserName(e.target.value);
+    }
 
     const validateHouseName = (e) => {
         const alphaNumericCheck = /^[a-z\d\-_\s]+$/i;
@@ -19,6 +43,7 @@ export default function Page() {
             return;
         }
         setHouseError(false);
+        setHouseName(e);
     }
 
     const validateEmail = (e) => {
@@ -29,16 +54,16 @@ export default function Page() {
             return;
         }
         setEmailError(false);
+        setEmail(e.target.value);
     }
 
     const validateUserPassword = (e) => {
         if (e.target.value.length < 8) {
-            console.log('should be erroring')
             setUserPasswordError(true);
-            setRePassword(e.target.value);
             return;
         }
         setUserPasswordError(false);
+        setPassword(e.target.value)
         setRePassword(e.target.value)
     }
 
@@ -51,15 +76,46 @@ export default function Page() {
     }
 
 
+    const signUp = async (e) => {
+
+        console.log("Firebase auth: " + firebaseAuth + "   Email: " + email  + "  Password:  " + password)
+        // example create data
+        const user = {
+            username: userName,
+            email: email,
+            emailVisibility: true,
+            password: password,
+            passwordConfirm: rePassword,
+            display_name: displayName,
+            house_name: houseName
+        };
+
+        // await pb.collection('users').create({ user });
+
+        createUserWithEmailAndPassword(firebaseAuth, email, password)
+            .then((userCredential) => {
+                // Signed in 
+                const user1 = userCredential.user;
+                // ...
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                // ..
+            });
+
+    }
+
+
 
     const form = () => {
         return (
             // Signup Form Ui
-            <form action="/api/form" method="post" className={styles.signUpFormContainer}>
+            <form method="post" className={styles.signUpFormContainer}>
 
                 <div className={styles.signUpFormContainerItem}>
 
-                    <input type="text" id="firstName" name="firstName" placeholder=" " />
+                    <input type="text" id="firstName" name="firstName" placeholder=" " onChange={(e) => validateDisplayName(e)} />
                     <label htmlFor="firstName" className={styles.signUpFormContainerItemPlaceholder}>First Name</label>
 
                 </div>
@@ -75,7 +131,7 @@ export default function Page() {
                 </div>
 
                 <div className={styles.signUpFormContainerItem}>
-                    <input type="text" id="houseName" name="houseName" placeholder=" " onChange={(e) => validateHouseName(e)} style={{ background: houseError ? "#E72727" : "white" }} required pattern="/^[a-z\d\-_\s]+$/i" />
+                    <input type="text" id="houseName" name="houseName" placeholder=" " onChange={(e) => validateHouseName(e)} style={{ background: houseError ? "#E72727" : "white" }} required />
                     <label htmlFor="houseName" className={styles.signUpFormContainerItemPlaceholder}> House Name</label>
                 </div>
 
@@ -85,12 +141,12 @@ export default function Page() {
                 </div>
 
                 <div className={styles.signUpFormContainerItem}>
-                    <input type="password" id="userPassword" name="userPassword" placeholder=" " onChange={(e) => validateUserPassword(e)} style={{ background: userPasswordError ? "#E72727" : "white" }} required minLength={8} />
+                    <input type="password" id="userPassword" name="userPassword" placeholder=" " onChange={(e) => validateUserPassword(e)} style={{ background: userPasswordError ? "#E72727" : "white" }} required minLength={7} />
                     <label htmlFor="userPassword" className={styles.signUpFormContainerItemPlaceholder}>Password</label>
                 </div>
 
                 <div className={styles.signUpFormContainerItem}>
-                    <input type="password" id="rePassword" name="rePassword" placeholder=" " onChange={(e) => validateUserRePassword(e)} style={{ background: userRePasswordError ? "#E72727" : "white" }} required minLength={8} />
+                    <input type="password" id="rePassword" name="rePassword" placeholder=" " onChange={(e) => validateUserRePassword(e)} style={{ background: userRePasswordError ? "#E72727" : "white" }} required minLength={7} />
                     <label htmlFor="rePassword" className={styles.signUpFormContainerItemPlaceholder}>Re-Enter pasword</label>
                 </div>
 
@@ -101,7 +157,7 @@ export default function Page() {
                     <div className={styles.signUpSubmitSectionbuttons}>
 
                         {!hasError && (
-                            <button type="submit" className={styles.signUpSubmitSectionSignUpButton}>Sign-up</button>
+                            <button type="submit" className={styles.signUpSubmitSectionSignUpButton} onClick={(e) => { signUp; console.log("Firebase auth: " + firebaseAuth + "   Email: " + email  + "  Password:  " + password) }}>Sign-up</button>
                         )}
                         {hasError && (
                             <button className={styles.signUpNotQuiteDisplay}>Not Quite</button>
