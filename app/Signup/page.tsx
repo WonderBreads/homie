@@ -5,10 +5,11 @@ import PocketBase from "pocketbase";
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import firebaseAuth from "@/firebase";
 
 export default function Page() {
 
-    const [password, setPassword] = useState("");
+    const [password, setPassword] = useState<string>("");
     const [rePassword, setRePassword] = useState("");
     const [houseError, setHouseError] = useState(false);
     const [emailError, setEmailError] = useState(false);
@@ -21,28 +22,7 @@ export default function Page() {
     const [userName, setUserName] = useState("");
     const [displayName, setDisplayName] = useState("");
 
-
-    // Import the functions you need from the SDKs you need
-
-    // TODO: Add SDKs for Firebase products that you want to use
-    // https://firebase.google.com/docs/web/setup#available-libraries
-
-    // Your web app's Firebase configuration
-    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-    const firebaseConfig = {
-        apiKey: "AIzaSyBHXTSxRBWYYcaaJU8fVz1kUhhUbtV6J2k",
-        authDomain: "homie-f1c4c.firebaseapp.com",
-        projectId: "homie-f1c4c",
-        storageBucket: "homie-f1c4c.appspot.com",
-        messagingSenderId: "296299800138",
-        appId: "1:296299800138:web:ba56234b0932254f81a8b3",
-        measurementId: "G-CKPG5ZHFTX"
-    };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-
-    const analytics = getAnalytics(app);
+    const [firebaseErrorMessage, setFirebaseErrorMessage] = useState("");
 
     const pb = new PocketBase('https://127.0.0.1.8090/');
     pb.autoCancellation(false);
@@ -63,6 +43,7 @@ export default function Page() {
             return;
         }
         setHouseError(false);
+        setHouseName(e);
     }
 
     const validateEmail = (e) => {
@@ -73,15 +54,16 @@ export default function Page() {
             return;
         }
         setEmailError(false);
+        setEmail(e.target.value);
     }
 
     const validateUserPassword = (e) => {
         if (e.target.value.length < 8) {
             setUserPasswordError(true);
-            setRePassword(e.target.value);
             return;
         }
         setUserPasswordError(false);
+        setPassword(e.target.value)
         setRePassword(e.target.value)
     }
 
@@ -94,38 +76,36 @@ export default function Page() {
     }
 
 
-    // const signUp = async (e) => {
+    const signUp = async (e) => {
 
-    //     // example create data
-    //     const user = {
-    //         "username": "test_username",
-    //         email: "test@example.com",
-    //         emailVisibility: true,
-    //         password: "12345678",
-    //         passwordConfirm: "12345678",
-    //         display_name: "test",
-    //         house_name: "test"
-    //     };
-    //     console.log("users: before collecion creation " + JSON.stringify(user));
+        console.log("Firebase auth: " + firebaseAuth + "   Email: " + email  + "  Password:  " + password)
+        // example create data
+        const user = {
+            username: userName,
+            email: email,
+            emailVisibility: true,
+            password: password,
+            passwordConfirm: rePassword,
+            display_name: displayName,
+            house_name: houseName
+        };
 
-    //     await pb.collection('users').create({ user });
+        // await pb.collection('users').create({ user });
 
-    //     console.log("users: after collecion creation " + user);
-    // }
+        createUserWithEmailAndPassword(firebaseAuth, email, password)
+            .then((userCredential) => {
+                // Signed in 
+                const user1 = userCredential.user;
+                // ...
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                // ..
+            });
 
-    const auth = getAuth(app);
-    console.log(app);
-    createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            // Signed in 
-            const user = userCredential.user;
-            // ...
-        })
-        .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            // ..
-        });
+    }
+
 
 
     const form = () => {
@@ -177,7 +157,7 @@ export default function Page() {
                     <div className={styles.signUpSubmitSectionbuttons}>
 
                         {!hasError && (
-                            <button type="submit" className={styles.signUpSubmitSectionSignUpButton} onClick={(e) => {createUserWithEmailAndPassword(auth,email,password);}}>Sign-up</button>
+                            <button type="submit" className={styles.signUpSubmitSectionSignUpButton} onClick={(e) => { signUp; console.log("Firebase auth: " + firebaseAuth + "   Email: " + email  + "  Password:  " + password) }}>Sign-up</button>
                         )}
                         {hasError && (
                             <button className={styles.signUpNotQuiteDisplay}>Not Quite</button>
