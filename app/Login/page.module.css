@@ -1,0 +1,29 @@
+.homePageContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 100px;
+    flex-direction: column;
+}
+
+.loginButton {
+    border-radius: 30px;
+    height: 86px;
+    width: 300px;
+    border: 1px solid black;
+    line-height: 29.05px;
+    font-size: 24px;
+    font-weight: 700;
+    background-color: #EAF2E6;
+}
+
+ .dontHaveAnAccount{
+    padding-top: 38px;
+    text-decoration: none;
+    color: #B325F5;
+
+}
+.dontHaveAnAccount:hover {
+    text-decoration: underline;
+}

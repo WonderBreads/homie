@@ -1,21 +1,26 @@
 'use client';
 import styles from "./page.module.css";
-import { useState } from "react";
+import { MouseEvent, useState } from "react";
 import PocketBase from "pocketbase";
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import firebaseAuth from "@/firebase";
+import firebaseAuth from "@/config";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
 
+    const router = useRouter();
     const [password, setPassword] = useState<string>("");
-    const [rePassword, setRePassword] = useState("");
+    const [rePassword, setRePassword] = useState("")
+    const [displayNameError, setDisplayNameError] = useState(false);
     const [houseError, setHouseError] = useState(false);
     const [emailError, setEmailError] = useState(false);
     const [userPasswordError, setUserPasswordError] = useState(false);
     const [userRePasswordError, setUserRePasswordError] = useState(false);
-    const hasError = houseError || emailError || userPasswordError || userRePasswordError;
+    const [firebaseAuthError, setFirebaseAuthError] = useState(false);
+    const [firebaseAuthErrorMessage, setFirebaseAuthErrorMessage] = useState("");
+    const hasError = houseError || emailError || userPasswordError || userRePasswordError || firebaseAuthError;
 
     const [email, setEmail] = useState("");
     const [houseName, setHouseName] = useState("");
@@ -24,29 +29,29 @@ export default function Page() {
 
     const [firebaseErrorMessage, setFirebaseErrorMessage] = useState("");
 
-    const pb = new PocketBase('https://127.0.0.1.8090/');
-    pb.autoCancellation(false);
+    // const pb = new PocketBase('https://127.0.0.1.8090/');
+    // pb.autoCancellation(false);
 
 
-    const validateDisplayName = (e) => {
-        setDisplayName(e.target.name);
+    const validateDisplayName = (e: ChangeEvent<HTMLInputElement>) => {
+        setDisplayName(e.target.value);
     }
 
-    const validateUserName = (e) => {
+    const validateUserName = (e: ChangeEvent<HTMLInputElement>) => {
         setUserName(e.target.value);
     }
 
-    const validateHouseName = (e) => {
+    const validateHouseName = (e: SetStateAction<string> | ChangeEvent<HTMLInputElement>) => {
         const alphaNumericCheck = /^[a-z\d\-_\s]+$/i;
         if (!alphaNumericCheck.test(e.target.value)) {
             setHouseError(true);
             return;
         }
         setHouseError(false);
-        setHouseName(e);
+        setHouseName(e.target.value);
     }
 
-    const validateEmail = (e) => {
+    const validateEmail = (e: ChangeEvent<HTMLInputElement>) => {
         const emailValidation = /^(([^<>()[\]\\.,;: \s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
         if (!(emailValidation.test(e.target.value))) {
@@ -57,7 +62,7 @@ export default function Page() {
         setEmail(e.target.value);
     }
 
-    const validateUserPassword = (e) => {
+    const validateUserPassword = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.value.length < 8) {
             setUserPasswordError(true);
             return;
@@ -67,7 +72,7 @@ export default function Page() {
         setRePassword(e.target.value)
     }
 
-    const validateUserRePassword = (e) => {
+    const validateUserRePassword = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.value !== rePassword) {
             setUserRePasswordError(true);
             return;
@@ -75,34 +80,95 @@ export default function Page() {
         setUserRePasswordError(false);
     }
 
+    async function postJSON(data: { username: string; firebaseAuth?: string; email?: string; emailVisibility?: boolean; password?: string; passwordConfirm?: string; display_name?: string; housename?: string; }) {
+        try {
+            const response = await fetch("http://localhost:3005/user", {
+                method: "POST", // or 'PUT'
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+            return response
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    }
 
-    const signUp = async (e) => {
 
-        console.log("Firebase auth: " + firebaseAuth + "   Email: " + email  + "  Password:  " + password)
+
+
+    const signUp = async (e: MouseEvent<HTMLButtonElement, MouseEvent>) => {
+
         // example create data
-        const user = {
-            username: userName,
-            email: email,
-            emailVisibility: true,
-            password: password,
-            passwordConfirm: rePassword,
-            display_name: displayName,
-            house_name: houseName
-        };
 
         // await pb.collection('users').create({ user });
 
         createUserWithEmailAndPassword(firebaseAuth, email, password)
-            .then((userCredential) => {
+            .then(async (userCredential) => {
                 // Signed in 
-                const user1 = userCredential.user;
+                console.log("Firebase auth: " + userCredential.user.uid + "   Email: " + email + "  Password:  " + password + " display name: " + displayName + " username: " + userName + " house name : " + houseName)
+                const user = userCredential.user;
+
+                const uuid = user.uid;
+
                 // ...
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                // ..
-            });
+
+                // fetch("http://localhost:3005/user", {
+                //     method: "POST", // or 'PUT'
+                //     headers: {
+                //         'Access-Control-Allow-Origin': '*',
+                //         "Content-Type": "application/json",
+                //     },
+                //     body: JSON.stringify(userCharacteristics),
+                // }).then(res => console.log("res ", res))
+                // .catch(error => console.log("error: ", error));
+
+                try {
+                    const response = await fetch("http://localhost:3005" + "/user", {
+                        method: "POST", // or 'PUT'
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            firebaseAuthID: uuid,
+                            userName: userName,
+                            email: email,
+                            emailVisibility: true,
+                            password: password,
+                            displayName: displayName,
+                            housename: houseName
+                        }),
+                    });
+                    const json = await response.json();
+                    console.log(json);
+                } catch (err) {
+                    console.log("error: ")
+                    console.log(err);
+                }
+
+            }
+            )
+
+
+
+
+        // console.log("API Response: ", response?.json());
+        // if (response?.ok) {
+        //     router.push("/");
+        // }
+        // })
+
+        // .catch((error) => {
+        //     const errorCode = error.code;
+        //     const errorMessage = error.message;
+        //     console.log("inside catch sstatement")
+        //     console.log(errorMessage);
+        //     setFirebaseAuthError(true)
+        //     setFirebaseAuthErrorMessage(errorMessage);
+        //     // ..
+        // });
 
     }
 
@@ -115,7 +181,14 @@ export default function Page() {
 
                 <div className={styles.signUpFormContainerItem}>
 
-                    <input type="text" id="firstName" name="firstName" placeholder=" " onChange={(e) => validateDisplayName(e)} />
+                    <input type="text" id="displayName" name="displayName" placeholder=" " onChange={(e) => validateDisplayName(e)} style={{ background: displayNameError ? "#E72727" : "white" }} required />
+                    <label htmlFor="firstName" className={styles.signUpFormContainerItemPlaceholder}>Display Name</label> 
+
+                </div>
+
+                <div className={styles.signUpFormContainerItem}>
+
+                    <input type="text" id="firstName" name="firstName" placeholder=" " />
                     <label htmlFor="firstName" className={styles.signUpFormContainerItemPlaceholder}>First Name</label>
 
                 </div>
@@ -126,7 +199,7 @@ export default function Page() {
                 </div>
 
                 <div className={styles.signUpFormContainerItem}>
-                    <input type="text" id="userName" name="userName" placeholder=" " />
+                    <input type="text" id="userName" name="userName" placeholder=" " onChange={(e) => validateUserName(e)} />
                     <label htmlFor="userName" className={styles.signUpFormContainerItemPlaceholder}>User Name</label>
                 </div>
 
@@ -157,13 +230,16 @@ export default function Page() {
                     <div className={styles.signUpSubmitSectionbuttons}>
 
                         {!hasError && (
-                            <button type="submit" className={styles.signUpSubmitSectionSignUpButton} onClick={(e) => { signUp; console.log("Firebase auth: " + firebaseAuth + "   Email: " + email  + "  Password:  " + password) }}>Sign-up</button>
+                            <button type="button" className={styles.signUpSubmitSectionSignUpButton} onClick={(e) => { signUp(e) }}>Sign-up</button>
                         )}
                         {hasError && (
                             <button className={styles.signUpNotQuiteDisplay}>Not Quite</button>
                         )}
                     </div>
                     <div className={styles.signUpErrorMessageDisplay} id="signUpErrorMessageId">
+                        {displayNameError  && (
+                            <h2>Error: Display Name</h2>
+                        )}
                         {houseError && (
                             <h2>Error: House names must contain only alpha numeric charectars</h2>
                         )}
@@ -175,6 +251,9 @@ export default function Page() {
                         )}
                         {userRePasswordError && (
                             <h2 >Error: Passwords do not match</h2>
+                        )}
+                        {firebaseAuthError && (
+                            <h2>{firebaseAuthErrorMessage}</h2>
                         )}
                     </div>
                 </div>
