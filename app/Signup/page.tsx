@@ -13,6 +13,7 @@ export default function Page() {
     const router = useRouter();
     const [password, setPassword] = useState<string>("");
     const [rePassword, setRePassword] = useState("")
+    const [userNameError, setUserNameError] = useState("");
     const [displayNameError, setDisplayNameError] = useState(false);
     const [houseError, setHouseError] = useState(false);
     const [emailError, setEmailError] = useState(false);
@@ -199,7 +200,7 @@ export default function Page() {
                 </div>
 
                 <div className={styles.signUpFormContainerItem}>
-                    <input type="text" id="userName" name="userName" placeholder=" " onChange={(e) => validateUserName(e)} />
+                    <input type="text" id="userName" name="userName" placeholder=" " onChange={(e) => validateUserName(e)} style={{ background: userNameError ? "#E72727" : "white" }} required />
                     <label htmlFor="userName" className={styles.signUpFormContainerItemPlaceholder}>User Name</label>
                 </div>
 
@@ -238,7 +239,10 @@ export default function Page() {
                     </div>
                     <div className={styles.signUpErrorMessageDisplay} id="signUpErrorMessageId">
                         {displayNameError  && (
-                            <h2>Error: Display Name</h2>
+                            <h2>Error: Display Name required</h2>
+                        )}
+                        {userNameError  && (
+                            <h2>Error: User Name required</h2>
                         )}
                         {houseError && (
                             <h2>Error: House names must contain only alpha numeric charectars</h2>
