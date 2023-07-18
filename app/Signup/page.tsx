@@ -7,13 +7,15 @@ import { getAnalytics } from "firebase/analytics";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import firebaseAuth from "@/config";
 import { useRouter } from "next/navigation";
+import { error } from "console";
+import { Elsie } from "@next/font/google";
 
 export default function Page() {
 
     const router = useRouter();
     const [password, setPassword] = useState<string>("");
     const [rePassword, setRePassword] = useState("")
-    const [userNameError, setUserNameError] = useState("");
+    const [userNameError, setUserNameError] = useState(false);
     const [displayNameError, setDisplayNameError] = useState(false);
     const [houseError, setHouseError] = useState(false);
     const [emailError, setEmailError] = useState(false);
@@ -21,7 +23,9 @@ export default function Page() {
     const [userRePasswordError, setUserRePasswordError] = useState(false);
     const [firebaseAuthError, setFirebaseAuthError] = useState(false);
     const [firebaseAuthErrorMessage, setFirebaseAuthErrorMessage] = useState("");
-    const hasError = houseError || emailError || userPasswordError || userRePasswordError || firebaseAuthError;
+    const [dataBaseError, setDataBaseError] = useState(false);
+    const [dataBaseErrorMessage, setDataBaseErrorMessage] = useState("");
+    const hasError = userNameError || displayNameError || houseError || emailError || userPasswordError || userRePasswordError || firebaseAuthError;
 
     const [email, setEmail] = useState("");
     const [houseName, setHouseName] = useState("");
@@ -35,130 +39,190 @@ export default function Page() {
 
 
     const validateDisplayName = (e: ChangeEvent<HTMLInputElement>) => {
+        if ((e.target.value === null || e.target.value.trim() === "")) {
+            setDisplayNameError(true);
+        }
+        else{
+        setDisplayNameError(false);
         setDisplayName(e.target.value);
+        }
     }
 
     const validateUserName = (e: ChangeEvent<HTMLInputElement>) => {
+        if (e.target.value === null || e.target.value.trim() === "" ) {
+            setUserNameError(true);
+        }
+        else {
+        setUserNameError(false);
         setUserName(e.target.value);
+        }
     }
 
     const validateHouseName = (e: SetStateAction<string> | ChangeEvent<HTMLInputElement>) => {
         const alphaNumericCheck = /^[a-z\d\-_\s]+$/i;
         if (!alphaNumericCheck.test(e.target.value)) {
+            if (!alphaNumericCheck.test(houseName) || houseName === null || houseName.trim() === "")
             setHouseError(true);
-            return;
+            
+            else
+            setHouseError(false);
         }
+        else{
         setHouseError(false);
         setHouseName(e.target.value);
+        }
     }
 
     const validateEmail = (e: ChangeEvent<HTMLInputElement>) => {
         const emailValidation = /^(([^<>()[\]\\.,;: \s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-        if (!(emailValidation.test(e.target.value))) {
+        if ((!(emailValidation.test(e.target.value)))) {
             setEmailError(true);
-            return;
         }
+        else {
         setEmailError(false);
         setEmail(e.target.value);
+        }
     }
 
     const validateUserPassword = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.value.length < 8) {
             setUserPasswordError(true);
-            return;
         }
+        else{
         setUserPasswordError(false);
         setPassword(e.target.value)
-        setRePassword(e.target.value)
+        }
     }
 
     const validateUserRePassword = (e: ChangeEvent<HTMLInputElement>) => {
-        if (e.target.value !== rePassword) {
+        if (e.target.value !== password) {
             setUserRePasswordError(true);
-            return;
         }
+        else{
+        setRePassword(e.target.value);
         setUserRePasswordError(false);
-    }
-
-    async function postJSON(data: { username: string; firebaseAuth?: string; email?: string; emailVisibility?: boolean; password?: string; passwordConfirm?: string; display_name?: string; housename?: string; }) {
-        try {
-            const response = await fetch("http://localhost:3005/user", {
-                method: "POST", // or 'PUT'
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data),
-            });
-            return response
-        } catch (error) {
-            console.error("Error:", error);
         }
     }
 
+    // async function postJSON(data: { username: string; firebaseAuth?: string; email?: string; emailVisibility?: boolean; password?: string; passwordConfirm?: string; display_name?: string; housename?: string; }) {
+    //     try {
+    //         const response = await fetch("http://localhost:3005/user", {
+    //             method: "POST", // or 'PUT'
+    //             headers: {
+    //                 'Access-Control-Allow-Origin': '*',
+    //                 "Content-Type": "application/json",
+    //             },
+    //             body: JSON.stringify(data),
+    //         });
+    //         return response
+    //     } catch (error) {
+    //         console.error("Error:", error);
+    //     }
+    // }
+
+    const emptyValueCheck = (e) => {
+        if (e === null || e.trim() === "") {
+            return true;
+        }
+        return false
+    }
 
 
 
     const signUp = async (e: MouseEvent<HTMLButtonElement, MouseEvent>) => {
-
         // example create data
+        if (emptyValueCheck(displayName) ) {
+            return setDisplayNameError(true);
 
+        }
+        else if (emptyValueCheck(userName)) {
+            return setUserNameError(true);
+        }
+        else if (emptyValueCheck(houseName)) {
+            return setHouseError(true);
+        }
+        else if (emptyValueCheck(email)) {
+            return setEmailError(true);
+        }
+        else if (emptyValueCheck(password)) {
+            return setUserPasswordError(true);
+        }
+        else if (emptyValueCheck(rePassword) || (rePassword !== password)) {
+            return setUserRePasswordError(true);
+        }
         // await pb.collection('users').create({ user });
+        try {
 
-        createUserWithEmailAndPassword(firebaseAuth, email, password)
-            .then(async (userCredential) => {
-                // Signed in 
-                console.log("Firebase auth: " + userCredential.user.uid + "   Email: " + email + "  Password:  " + password + " display name: " + displayName + " username: " + userName + " house name : " + houseName)
-                const user = userCredential.user;
 
-                const uuid = user.uid;
 
-                // ...
+            createUserWithEmailAndPassword(firebaseAuth, email, password)
+                .then(async userCredential => {
+                    console.log("DisplayName Error: " + displayNameError + " username Error: " + userNameError + " houseError: " + houseError);
+                    // Signed in 
+                    setFirebaseAuthError(false);
+                    console.log("Firebase auth: " + userCredential.user.uid + "   Email: " + email + "  Password:  " + password + " display name: " + displayName + " username: " + userName + " house name : " + houseName)
+                    const user = userCredential.user;
 
-                // fetch("http://localhost:3005/user", {
-                //     method: "POST", // or 'PUT'
-                //     headers: {
-                //         'Access-Control-Allow-Origin': '*',
-                //         "Content-Type": "application/json",
-                //     },
-                //     body: JSON.stringify(userCharacteristics),
-                // }).then(res => console.log("res ", res))
-                // .catch(error => console.log("error: ", error));
+                    const uuid = user.uid;
 
-                try {
-                    const response = await fetch("http://localhost:3005" + "/user", {
-                        method: "POST", // or 'PUT'
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            firebaseAuthID: uuid,
-                            userName: userName,
-                            email: email,
-                            emailVisibility: true,
-                            password: password,
-                            displayName: displayName,
-                            housename: houseName
-                        }),
-                    });
-                    const json = await response.json();
-                    console.log(json);
-                } catch (err) {
-                    console.log("error: ")
-                    console.log(err);
+                    // ...
+
+                    // fetch("http://localhost:3005/user", {
+                    //     method: "POST", // or 'PUT'
+                    //     headers: {
+                    //         'Access-Control-Allow-Origin': '*',
+                    //         "Content-Type": "application/json",
+                    //     },
+                    //     body: JSON.stringify(userCharacteristics),
+                    // }).then(res => console.log("res ", res))
+                    // .catch(error => console.log("error: ", error));
+
+                    try {
+                        const response = await fetch("http://localhost:3005" + "/user", {
+                            method: "POST", // or 'PUT'
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                firebaseAuthID: uuid,
+                                userName: userName,
+                                email: email,
+                                emailVisibility: true,
+                                password: password,
+                                displayName: displayName,
+                                housename: houseName
+                            }),
+                        });
+                        const json = await response.json();
+                        console.log(json);
+                        if (response?.ok) {
+                            router.push("/");
+                            setDataBaseError(false);
+                        }
+
+                    } catch (err) {
+                        if (!(e instanceof Error)) {
+                            e = new Error(e);
+                        }
+                        console.error(e.message);
+
+                        setDataBaseError(true);
+                        setDataBaseErrorMessage(err.status + " " + err.statusText);
+                        console.log("error: ")
+                        console.log(err);
+                    }
                 }
-
-            }
-            )
-
-
-
+                )
+        }
+        catch (err) {
+            console.log(err);
+            setFirebaseAuthError(true);
+            return setFirebaseErrorMessage(err);
+        }
 
         // console.log("API Response: ", response?.json());
-        // if (response?.ok) {
-        //     router.push("/");
-        // }
+
         // })
 
         // .catch((error) => {
@@ -183,7 +247,7 @@ export default function Page() {
                 <div className={styles.signUpFormContainerItem}>
 
                     <input type="text" id="displayName" name="displayName" placeholder=" " onChange={(e) => validateDisplayName(e)} style={{ background: displayNameError ? "#E72727" : "white" }} required />
-                    <label htmlFor="firstName" className={styles.signUpFormContainerItemPlaceholder}>Display Name</label> 
+                    <label htmlFor="firstName" className={styles.signUpFormContainerItemPlaceholder}>Display Name</label>
 
                 </div>
 
@@ -238,14 +302,14 @@ export default function Page() {
                         )}
                     </div>
                     <div className={styles.signUpErrorMessageDisplay} id="signUpErrorMessageId">
-                        {displayNameError  && (
+                        {displayNameError && (
                             <h2>Error: Display Name required</h2>
                         )}
-                        {userNameError  && (
+                        {userNameError && (
                             <h2>Error: User Name required</h2>
                         )}
                         {houseError && (
-                            <h2>Error: House names must contain only alpha numeric charectars</h2>
+                            <h2>Error: House names is requires and must contain only alpha numeric charectars</h2>
                         )}
                         {emailError && (
                             <h2 >Error: Invaild Email</h2>
@@ -258,6 +322,9 @@ export default function Page() {
                         )}
                         {firebaseAuthError && (
                             <h2>{firebaseAuthErrorMessage}</h2>
+                        )}
+                        {dataBaseError && (
+                            <h2>{dataBaseErrorMessage}</h2>
                         )}
                     </div>
                 </div>
