@@ -2,7 +2,7 @@
 import styles from "./page.module.css";
 import { MouseEvent, useState } from "react";
 import PocketBase from "pocketbase";
-import { initializeApp } from "firebase/app";
+import { FirebaseError, initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import firebaseAuth from "@/config";
@@ -25,7 +25,8 @@ export default function Page() {
     const [firebaseAuthErrorMessage, setFirebaseAuthErrorMessage] = useState("");
     const [dataBaseError, setDataBaseError] = useState(false);
     const [dataBaseErrorMessage, setDataBaseErrorMessage] = useState("");
-    const hasError = userNameError || displayNameError || houseError || emailError || userPasswordError || userRePasswordError || firebaseAuthError;
+    const [submitClicKCounter, setSubmitClickCounter] = useState(0);
+    const hasError = userNameError || displayNameError || houseError || emailError || userPasswordError || userRePasswordError || firebaseAuthError || dataBaseError;
 
     const [email, setEmail] = useState("");
     const [houseName, setHouseName] = useState("");
@@ -82,6 +83,7 @@ export default function Page() {
         else {
         setEmailError(false);
         setEmail(e.target.value);
+        setFirebaseAuthError(false);
         }
     }
 
@@ -132,6 +134,8 @@ export default function Page() {
 
     const signUp = async (e: MouseEvent<HTMLButtonElement, MouseEvent>) => {
         // example create data
+        e.preventDefault();
+
         if (emptyValueCheck(displayName) ) {
             return setDisplayNameError(true);
 
@@ -152,15 +156,13 @@ export default function Page() {
             return setUserRePasswordError(true);
         }
         // await pb.collection('users').create({ user });
-        try {
-
-
-
-            createUserWithEmailAndPassword(firebaseAuth, email, password)
+         try {
+           await createUserWithEmailAndPassword(firebaseAuth, email, password)
                 .then(async userCredential => {
                     console.log("DisplayName Error: " + displayNameError + " username Error: " + userNameError + " houseError: " + houseError);
                     // Signed in 
                     setFirebaseAuthError(false);
+                    setEmailError(false);
                     console.log("Firebase auth: " + userCredential.user.uid + "   Email: " + email + "  Password:  " + password + " display name: " + displayName + " username: " + userName + " house name : " + houseName)
                     const user = userCredential.user;
 
@@ -185,7 +187,7 @@ export default function Page() {
                                 'Content-Type': 'application/json',
                             },
                             body: JSON.stringify({
-                                firebaseAuthID: uuid,
+                                firebaseAuthID: 1111111,
                                 userName: userName,
                                 email: email,
                                 emailVisibility: true,
@@ -197,18 +199,17 @@ export default function Page() {
                         const json = await response.json();
                         console.log(json);
                         if (response?.ok) {
+                            setSubmitClickCounter(1);
+                            document.getElementById(id);
+                            // document.getElementById("SignUpSubmitButton")?.removeAttribute("disabled") ;
                             router.push("/");
                             setDataBaseError(false);
                         }
 
                     } catch (err) {
-                        if (!(e instanceof Error)) {
-                            e = new Error(e);
-                        }
-                        console.error(e.message);
-
+                        console.error(err.code);
                         setDataBaseError(true);
-                        setDataBaseErrorMessage(err.status + " " + err.statusText);
+                        setDataBaseErrorMessage(err + "");
                         console.log("error: ")
                         console.log(err);
                     }
@@ -218,7 +219,8 @@ export default function Page() {
         catch (err) {
             console.log(err);
             setFirebaseAuthError(true);
-            return setFirebaseErrorMessage(err);
+            setEmailError(true);
+            setFirebaseAuthErrorMessage(err.code);
         }
 
         // console.log("API Response: ", response?.json());
@@ -242,7 +244,7 @@ export default function Page() {
     const form = () => {
         return (
             // Signup Form Ui
-            <form method="post" className={styles.signUpFormContainer}>
+            <form method="post" className={styles.signUpFormContainer} >
 
                 <div className={styles.signUpFormContainerItem}>
 
@@ -292,13 +294,12 @@ export default function Page() {
                 {/* Error message display  */}
                 <div className={styles.signUpSubmitSection}>
 
-                    <div className={styles.signUpSubmitSectionbuttons}>
-
-                        {!hasError && (
-                            <button type="button" className={styles.signUpSubmitSectionSignUpButton} onClick={(e) => { signUp(e) }}>Sign-up</button>
-                        )}
+                    <div className={styles.signUpSubmitSectionbuttons}> 
                         {hasError && (
-                            <button className={styles.signUpNotQuiteDisplay}>Not Quite</button>
+                            <button className={styles.signUpNotQuiteDisplay} disabled>Not Quite</button>
+                        )}
+                        {!hasError &&  (
+                            <button type="button"  id="SignUpSubmitButton" className={styles.signUpSubmitSectionSignUpButton} onClick={ (e) => {signUp(e) }}>Sign-up</button>
                         )}
                     </div>
                     <div className={styles.signUpErrorMessageDisplay} id="signUpErrorMessageId">
